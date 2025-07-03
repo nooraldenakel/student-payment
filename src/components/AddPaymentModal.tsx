@@ -52,6 +52,7 @@ const AddPaymentModal: React.FC<AddPaymentModalProps> = ({
     floorNumber: ''
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [newlyCreatedStudentId, setNewlyCreatedStudentId] = useState<string | null>(null);
 
   const filteredStudents = students.filter(student =>
     student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -60,38 +61,33 @@ const AddPaymentModal: React.FC<AddPaymentModalProps> = ({
   );
 
   const handleAddPayment = async () => {
-        if (selectedStudent && amount) {
+        if (selectedStudent && amount && newlyCreatedStudentId) {
             const payload = {
-                studentId: selectedStudent.id,
+                studentId: newlyCreatedStudentId,
                 amount: parseFloat(amount),
-                date: new Date().toISOString().split('T')[0], // YYYY-MM-DD
-                month: (new Date().getMonth() + 1).toString(), // JS months start from 0
+                date: new Date().toISOString().split('T')[0],
+                month: (new Date().getMonth() + 1).toString(),
                 year: new Date().getFullYear(),
                 confirmed: false
             };
-            console.log("payload - information:", payload);
             try {
                 const response = await fetch("https://student-payment-app-production.up.railway.app/payments", {
                     method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
+                    headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(payload)
                 });
 
-                if (!response.ok) {
-                    throw new Error("Failed to add payment");
-                }
-
+                if (!response.ok) throw new Error("Failed to add payment");
                 const data = await response.json();
-                console.log("Payment added:", data);
-                onAddPayment(selectedStudent.id, parseFloat(amount)); // optional callback
+                console.log("✅ Payment added:", data);
+
+                onAddPayment(selectedStudent.id, parseFloat(amount)); // callback to update UI
                 onClose();
             } catch (error) {
                 console.error("Error adding payment:", error);
             }
         }
-    };
+    }; //add new Payment
 
   const validateNewStudent = () => {
     const newErrors: Record<string, string> = {};
@@ -129,15 +125,14 @@ const AddPaymentModal: React.FC<AddPaymentModalProps> = ({
                     },
                     body: JSON.stringify(newStudent)
                 });
-
                 if (!response.ok) {
                     throw new Error("Failed to register new student");
                 }
-
                 const createdStudent = await response.json();
+                console.log("Student Id:",createdStudent.id); // هذا الـ uuid من الـ backend
                 console.log("✅ Student added:", createdStudent);
-
-                onAddStudent(createdStudent); // حتى تحدث القائمة بعد الرد
+                onAddStudent(createdStudent);
+                setNewlyCreatedStudentId(createdStudent.id);
                 setShowNewStudentForm(false);
                 setNewStudent({
                     name: '',
@@ -152,14 +147,14 @@ const AddPaymentModal: React.FC<AddPaymentModalProps> = ({
                 console.error("Error registering student:", error);
             }
         }
-    };
+    }; // add new student
 
   const handleNewStudentChange = (field: string, value: string) => {
     setNewStudent(prev => ({ ...prev, [field]: value }));
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: '' }));
     }
-  };
+  }; 
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in" dir="rtl">
