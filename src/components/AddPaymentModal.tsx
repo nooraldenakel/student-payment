@@ -79,7 +79,7 @@ const AddPaymentModal: React.FC<AddPaymentModalProps> = ({
                 //        "Content-Type": "application/json"
                 //    },
                 //    body: JSON.stringify(payload)
-                const response = await fetch("/payments", {
+                const response = await fetch("https://student-payment-app-production.up.railway.app/payments", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(payload)
