@@ -70,7 +70,14 @@ const AddPaymentModal: React.FC<AddPaymentModalProps> = ({
                 confirmed: false
             };
 
-
+            const nPayload = {
+                studentId: "c0fa064f-6707-45d2-b36c-9e2d8260a3ea",
+                amount: 900,
+                date: "2025-07-03",
+                month: "7",
+                year: 2025,
+                confirmed: false
+            };
 
             try {
                 const response = await fetch("https://student-payment-app-production.up.railway.app/payments", {
@@ -78,7 +85,7 @@ const AddPaymentModal: React.FC<AddPaymentModalProps> = ({
                     headers: {
                         "Content-Type": "application/json"
                     },
-                    body: JSON.stringify(payload)
+                    body: JSON.stringify(nPayload)
                 });
 
                 if (!response.ok) {
