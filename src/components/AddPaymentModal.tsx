@@ -69,7 +69,7 @@ const AddPaymentModal: React.FC<AddPaymentModalProps> = ({
                 year: new Date().getFullYear(),
                 confirmed: false
             };
-
+            console.log("payload - information:", payload);
             try {
                 const response = await fetch("https://student-payment-app-production.up.railway.app/payments", {
                     method: "POST",
@@ -92,7 +92,6 @@ const AddPaymentModal: React.FC<AddPaymentModalProps> = ({
             }
         }
     };
-
 
   const validateNewStudent = () => {
     const newErrors: Record<string, string> = {};
@@ -154,7 +153,6 @@ const AddPaymentModal: React.FC<AddPaymentModalProps> = ({
             }
         }
     };
-
 
   const handleNewStudentChange = (field: string, value: string) => {
     setNewStudent(prev => ({ ...prev, [field]: value }));
